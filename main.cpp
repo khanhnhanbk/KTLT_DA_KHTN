@@ -1,4 +1,3 @@
-#include <string>
 #include <fstream>
 #include "consoleM.h"
 #include "game.h"
@@ -100,9 +99,9 @@ void loadFile()
     DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE);
     // ve Y da ve dich
     DrawSticker({Y.x, Y.y}, "Y");
-    for (int i = 0; i < countY; i++)
+    for (int j = 0; j < countY; j++)
     {
-        DrawSticker({preY[i], 1}, "Y");
+        DrawSticker({preY[j], 1}, "Y");
     }
     STATE = true;
     flag = true;

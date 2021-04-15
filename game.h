@@ -1,8 +1,10 @@
+#include <string>
 #include "consoleM.h"
 //Hàm khởi tạo dữ liệu mặc định ban đầu
 #define MAX_CAR 17
-#define MAX_CAR_LENGTH 4
+#define MAX_CAR_LENGTH 40
 #define MAX_SPEED 3
+#define thoiGianDung 50 // moi xe dung 10 nhip
 //Biến toàn cục
 POINT **X;                                   //Mảng chứa MAX_CAR xe
 POINT Y;                                     // Đại diện người qua đường
@@ -14,6 +16,8 @@ bool STATE;
 long *preY;
 int countY;
 bool flag{true};
+int dungXe{0};           // thuc hien dung xe neu so xe dong du voi so dung Xe theo mod7
+int tinhThoiGianDung{0}; // so lan cap nhap thoi gian dung
 
 void ResetData()
 {
@@ -143,22 +147,22 @@ void ProcessFinish(POINT &p)
     MOVING = 'D'; // Ban đầu cho người di chuyển sang phải
 }
 //Hàm vẽ các toa xe
-void DrawCars(char *s)
+void DrawCars(const string s)
 {
     for (int i = 0; i < MAX_CAR; i++)
     {
         for (int j = 0; j < MAX_CAR_LENGTH; j++)
         {
             GotoXY(X[i][j].x, X[i][j].y);
-            printf(".");
+            cout << s;
         }
     }
 }
 //Hàm vẽ người qua đường
-void DrawSticker(const POINT &p, char *s)
+void DrawSticker(const POINT &p, const string s)
 {
     GotoXY(p.x, p.y);
-    printf(s);
+    cout << s;
 }
 
 bool IsImpact(const POINT &p)
@@ -183,8 +187,17 @@ bool IsImpact(const POINT &p)
 
 void MoveCars()
 {
+    if (tinhThoiGianDung == thoiGianDung)
+    {
+        dungXe = rand();
+        tinhThoiGianDung = 0;
+    }
     for (int i = 1; i < MAX_CAR; i += 2)
     {
+        if ((dungXe - i) % 7 == 0)
+        {
+            continue;
+        }
         cnt = 0;
         do
         {
@@ -193,14 +206,18 @@ void MoveCars()
             {
                 X[i][j] = X[i][j + 1];
             }
-            X[i][MAX_CAR_LENGTH - 1].x + 1 == WIDTH_CONSOLE ? X[i][MAX_CAR_LENGTH -
-                                                                   1]
-                                                                  .x = 1
-                                                            : X[i][MAX_CAR_LENGTH - 1].x++; // Kiểm tra xem xe có đụng màn hình
+            if (X[i][MAX_CAR_LENGTH - 1].x + 1 == WIDTH_CONSOLE)
+                X[i][MAX_CAR_LENGTH - 1].x = 1;
+            else
+                X[i][MAX_CAR_LENGTH - 1].x++; // Kiểm tra xem xe có đụng màn hình
         } while (cnt < SPEED);
     }
     for (int i = 0; i < MAX_CAR; i += 2)
     {
+        if ((dungXe - i) % 7 == 0)
+        {
+            continue;
+        }
         cnt = 0;
         do
         {
@@ -209,7 +226,10 @@ void MoveCars()
             {
                 X[i][j] = X[i][j - 1];
             }
-            X[i][0].x - 1 == 0 ? X[i][0].x = WIDTH_CONSOLE - 1 : X[i][0].x--; // Kiểm
+            if (X[i][0].x - 1 == 0)
+                X[i][0].x = WIDTH_CONSOLE - 1;
+            else
+                X[i][0].x--; // Kiểm tra xe co dung thanh hay khong
         } while (cnt < SPEED);
     }
 }
@@ -307,6 +327,7 @@ void SubThread()
                 }
                 if (Y.y == 1)
                     ProcessFinish(Y); // Kiểm tra xem về đích chưa
+                tinhThoiGianDung++;   // dem so vong lap
                 Sleep(50);            //Hàm ngủ theo tốc độ SPEED
             }
         }
