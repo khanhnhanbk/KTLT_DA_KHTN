@@ -77,7 +77,6 @@ void DrawBoard(int x, int y, int width, int height, int curPosX = 0, int curPosY
 void StartGame()
 {
     system("cls");
-    system("color 0A");
     ResetData();                                   // Khởi tạo dữ liệu gốc
     DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE); // Vẽ màn hình game
     STATE = true;                                  //Bắt đầu cho Thread chạy
@@ -93,15 +92,10 @@ void GabageCollect()
     delete[] preY;
 }
 //Hàm thoát game
-void ExitGame(HANDLE t)
-{
-    system("cls");
-    // TerminateThread(t, 0);
-    GabageCollect();
-}
 //Hàm dừng game
 void PauseGame(HANDLE t)
 {
+    flag = !flag;
     SuspendThread(t);
     Sleep(100);
     GotoXY(0, HEIGH_CONSOLE + 2);
@@ -116,6 +110,13 @@ void PauseGame(HANDLE t)
         cout << "                                              \n"
              << "                                              \n"
              << "                                              \n";
+}
+void ExitGame(HANDLE t)
+{
+    system("cls");
+    // TerminateThread(t, 0);
+    PauseGame(t);
+    GabageCollect();
 }
 //Hàm xử lý khi người đụng xe
 void ProcessDead()
@@ -149,12 +150,16 @@ void ProcessFinish(POINT &p)
 //Hàm vẽ các toa xe
 void DrawCars(const string s)
 {
+    string y = "+";
     for (int i = 0; i < MAX_CAR; i++)
     {
         for (int j = 0; j < MAX_CAR_LENGTH; j++)
         {
             GotoXY(X[i][j].x, X[i][j].y);
-            cout << s;
+            if ((dungXe - i) % 7 == 0)
+                cout << y;
+            else
+                cout << s;
         }
     }
 }
@@ -320,7 +325,7 @@ void SubThread()
                 MOVING = ' '; // Tạm khóa không cho di chuyển, chờ nhận phím từ hàm main
                 EraseCars();
                 MoveCars();
-                DrawCars(".");
+                DrawCars("-");
                 if (IsImpact(Y))
                 {
                     ProcessDead(); // Kiểm tra xe có đụng không

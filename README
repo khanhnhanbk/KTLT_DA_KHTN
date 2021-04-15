@@ -1,0 +1,23 @@
+Game là một vòng lặp vô hạn
+
+Luồng chạy của file.
+Chạy hàm main()
+khởi tạo game
+FixConsoleWindow(): làm cho người dùng không thể thay đổi kích thước màn hình console
+ShowConsoleCursor(false); ẩn con trỏ
+srand(time(NULL)); khởi tạo thời gian (đưa về null);
+In ra màn hình
+	nếu người dùng nhập T thì tải game
+	còn lại thì bắt đầu game.
+tạo một thread mới (không biết dịch ra tiếng việt là gì), bây giờ chương trình chạy theo hai hướng độc lập, (có thể tưởng tượng là chạy hai hàm cùng một lúc).
+	Hàm main()
+	Hàm SubThread()
+Tới đây ta phải cùng một lúc quản lý hai luồng chạy
+	Trong hàm main()
+		Là vòng lặp vô hạn.
+		Đợi người dùng nhập vào (lưu vào biến temp)
+		Tự đọc logic nha.
+	Trong hàm SubThread()
+		Là vòng lặp vô hạn
+		Tự đọc logic nha.
+		Đặc biệt sau mỗi vòng lặp có Sleep(50), nghĩa là dừng chương trình (cụ thể đây là vòng lặp) trong vòng 50ms (1s = 1000ms)

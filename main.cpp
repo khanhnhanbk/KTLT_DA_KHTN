@@ -120,6 +120,7 @@ bool proceedMainScreen()
 int main()
 {
     int temp;
+    system("color 0A");
     FixConsoleWindow();
     ShowConsoleCursor(false);
     srand(time(NULL));
@@ -139,7 +140,6 @@ int main()
             }
             else if (temp == 'P')
             {
-                flag = !flag;
                 PauseGame((HANDLE)t1.native_handle());
             }
             else if (temp == 'T')
