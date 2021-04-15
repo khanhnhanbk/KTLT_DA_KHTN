@@ -1,22 +1,26 @@
 #include "consoleM.h"
 //Hàm khởi tạo dữ liệu mặc định ban đầu
 #define MAX_CAR 17
-#define MAX_CAR_LENGTH 40
+#define MAX_CAR_LENGTH 4
 #define MAX_SPEED 3
 //Biến toàn cục
-POINT **X;                        //Mảng chứa MAX_CAR xe
-POINT Y;                          // Đại diện người qua đường
-int cnt = 0;                      //Biến hỗ trợ trong quá trình tăng tốc độ xe di chuyển
-int MOVING;                       //Biến xác định hướng di chuyển của người
-int SPEED;                        // Tốc độ xe chạy (xem như level)
+POINT **X;                                   //Mảng chứa MAX_CAR xe
+POINT Y;                                     // Đại diện người qua đường
+int cnt = 0;                                 //Biến hỗ trợ trong quá trình tăng tốc độ xe di chuyển
+int MOVING;                                  //Biến xác định hướng di chuyển của người
+int SPEED;                                   // Tốc độ xe chạy (xem như level)
 int HEIGH_CONSOLE = 20, WIDTH_CONSOLE = 100; // Độ rộng và độ cao của màn hình console
 bool STATE;
+long *preY;
+int countY;
+bool flag{true};
 
 void ResetData()
 {
     MOVING = 'D'; // Ban đầu cho người di chuyển sang phải
     SPEED = 1;    // Tốc độ lúc đầu
-    Y = {18, 19}; // Vị trí lúc đầu của người
+    int pos = rand() % (WIDTH_CONSOLE - 1) + 1;
+    Y = {pos, 19}; // Vị trí lúc đầu của người
     // Tạo mảng xe chạy
     if (X == NULL)
     {
@@ -33,6 +37,15 @@ void ResetData()
             }
         }
     }
+    if (preY == NULL)
+    {
+        preY = new long[WIDTH_CONSOLE];
+    }
+    for (int i = 0; i < WIDTH_CONSOLE; i++)
+    {
+        preY[i] = -1;
+    }
+    countY = 0;
 }
 
 void DrawBoard(int x, int y, int width, int height, int curPosX = 0, int curPosY = 0)
@@ -60,6 +73,7 @@ void DrawBoard(int x, int y, int width, int height, int curPosX = 0, int curPosY
 void StartGame()
 {
     system("cls");
+    system("color 0A");
     ResetData();                                   // Khởi tạo dữ liệu gốc
     DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE); // Vẽ màn hình game
     STATE = true;                                  //Bắt đầu cho Thread chạy
@@ -72,6 +86,7 @@ void GabageCollect()
         delete[] X[i];
     }
     delete[] X;
+    delete[] preY;
 }
 //Hàm thoát game
 void ExitGame(HANDLE t)
@@ -84,20 +99,46 @@ void ExitGame(HANDLE t)
 void PauseGame(HANDLE t)
 {
     SuspendThread(t);
+    Sleep(100);
+    GotoXY(0, HEIGH_CONSOLE + 2);
+    GotoXY(0, HEIGH_CONSOLE + 2);
+    GotoXY(0, HEIGH_CONSOLE + 2);
+    GotoXY(0, HEIGH_CONSOLE + 2);
+    if (!flag)
+        cout << "Da dung game, nhan \"P\" lan nua de tiep tuc.\n"
+             << "Nhan \"T\" de tai lai game da luu. \n"
+             << "Nhan \"L\" de luu game.";
+    else
+        cout << "                                              \n"
+             << "                                              \n"
+             << "                                              \n";
 }
 //Hàm xử lý khi người đụng xe
 void ProcessDead()
 {
     STATE = 0;
-// Ve ra chu SOS
-    
-    GotoXY(0, HEIGH_CONSOLE + 2);
+    // Ve ra chu SOS
+    system("cls");
+    GotoXY(20, 18);
     printf("Dead, type y to continue or anykey to exit");
+    GotoXY(0, 5);
+    cout << "\t\t**********      ***********      ***********" << '\n'
+         << "\t\t**********      ***********      ***********" << '\n'
+         << "\t\t***             **       **      ***        " << '\n'
+         << "\t\t***             **       **      ***        " << '\n'
+         << "\t\t**********      **       **      ***********" << '\n'
+         << "\t\t**********      **       **      ***********" << '\n'
+         << "\t\t       ***      **       **              ***" << '\n'
+         << "\t\t       ***      **       **              ***" << '\n'
+         << "\t\t**********      ***********      ***********" << '\n'
+         << "\t\t**********      ***********      ***********" << '\n';
 }
 //Hàm xử lý khi người băng qua đường thành công
 void ProcessFinish(POINT &p)
 {
     SPEED == MAX_SPEED ? SPEED = 1 : SPEED++;
+    preY[countY] = p.x;
+    countY++;
     p = {18, 19}; // Vị trí lúc đầu của người
     MOVING = 'D'; // Ban đầu cho người di chuyển sang phải
 }
@@ -122,6 +163,14 @@ void DrawSticker(const POINT &p, char *s)
 
 bool IsImpact(const POINT &p)
 {
+    if (p.y == 1)
+    {
+        for (int i = 0; i < countY; i++)
+        {
+            if (p.x == preY[i])
+                return true;
+        }
+    }
     if (p.y == 1 || p.y == 19)
         return false;
     for (int i = 0; i < MAX_CAR_LENGTH; i++)
@@ -228,34 +277,38 @@ void SubThread()
 {
     while (1)
     {
-        if (STATE) //Nếu người vẫn còn sống
+        if (flag)
         {
-            switch (MOVING) //Kiểm tra biến moving
+
+            if (STATE) //Nếu người vẫn còn sống
             {
-            case 'A':
-                MoveLeft();
-                break;
-            case 'D':
-                MoveRight();
-                break;
-            case 'W':
-                MoveUp();
-                break;
-            case 'S':
-                MoveDown();
-                break;
+                switch (MOVING) //Kiểm tra biến moving
+                {
+                case 'A':
+                    MoveLeft();
+                    break;
+                case 'D':
+                    MoveRight();
+                    break;
+                case 'W':
+                    MoveUp();
+                    break;
+                case 'S':
+                    MoveDown();
+                    break;
+                }
+                MOVING = ' '; // Tạm khóa không cho di chuyển, chờ nhận phím từ hàm main
+                EraseCars();
+                MoveCars();
+                DrawCars(".");
+                if (IsImpact(Y))
+                {
+                    ProcessDead(); // Kiểm tra xe có đụng không
+                }
+                if (Y.y == 1)
+                    ProcessFinish(Y); // Kiểm tra xem về đích chưa
+                Sleep(50);            //Hàm ngủ theo tốc độ SPEED
             }
-            MOVING = ' '; // Tạm khóa không cho di chuyển, chờ nhận phím từ hàm main
-            EraseCars();
-            MoveCars();
-            DrawCars(".");
-            if (IsImpact(Y))
-            {
-                ProcessDead(); // Kiểm tra xe có đụng không
-            }
-            if (Y.y == 1)
-                ProcessFinish(Y); // Kiểm tra xem về đích chưa
-            Sleep(50);            //Hàm ngủ theo tốc độ SPEED
         }
     }
 }
