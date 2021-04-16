@@ -20,3 +20,5 @@ Tô màu các xe đang đứng yên để người chơi dễ nhận biết.
 ---------------
 thay đổi tọa độ board game về trung tâm màn hình.
 để ở phía trên là phần ghi điểm cho người chơi.
+---------------
+Tách file ra để dễ quản lý.
