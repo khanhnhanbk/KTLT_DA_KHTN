@@ -35,10 +35,10 @@ void saveFile()
     cout << "Da luu vao file.\n";
     system("pause");
     system("cls");
-    DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE);
+    DrawBoard(posBoard.x, posBoard.y, WIDTH_CONSOLE, HEIGH_CONSOLE);
     for (int i = 0; i < countY; i++)
     {
-        DrawSticker({preY[i], 1}, "Y");
+        DrawSticker({preY[i], posBoard.y + 1}, "Y");
     }
     DrawSticker(Y, "Y");
     flag = true;
@@ -101,7 +101,7 @@ void loadFile()
     DrawSticker({Y.x, Y.y}, "Y");
     for (int j = 0; j < countY; j++)
     {
-        DrawSticker({preY[j], 1}, "Y");
+        DrawSticker({preY[j], posBoard.y + 1}, "Y");
     }
     STATE = true;
     flag = true;
