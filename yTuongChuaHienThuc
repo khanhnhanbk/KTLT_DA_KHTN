@@ -22,3 +22,5 @@ thay đổi tọa độ board game về trung tâm màn hình.
 để ở phía trên là phần ghi điểm cho người chơi.
 ---------------
 Tách file ra để dễ quản lý.
+---------------
+Thêm chỗ thoát game nút xác nhận, buộc người dùng nhấn Yes, rồi enter mới cho thoát. Tránh để thoát đột ngột 

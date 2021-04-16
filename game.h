@@ -1,11 +1,13 @@
 #pragma once
 #include <string>
 #include "consoleM.h"
-//Hàm khởi tạo dữ liệu mặc định ban đầu
-#define MAX_CAR 17        //
-#define MAX_CAR_LENGTH 10 //
-#define MAX_SPEED 3       //
-#define thoiGianDung 50   // moi xe dung 10 nhip
+#define MAX_CAR 17                 //
+#define MAX_CAR_LENGTH 10          //
+#define MAX_SPEED 3                //
+#define thoiGianDung 50            // moi xe dung 10 nhip
+#define RESET "\033[0m"            //
+#define RED "\033[31m"             // Red */
+#define BOLDBLUE "\033[1m\033[34m" // blue
 //Biến toàn cục
 POINT **X;                                   //Mảng chứa MAX_CAR xe
 POINT Y;                                     // Đại diện người qua đường
@@ -14,13 +16,13 @@ int cnt = 0;                                 //Biến hỗ trợ trong quá trì
 int MOVING;                                  //Biến xác định hướng di chuyển của người
 int SPEED;                                   // Tốc độ xe chạy (xem như level)
 int HEIGH_CONSOLE = 20, WIDTH_CONSOLE = 100; // Độ rộng và độ cao của màn hình console
-bool STATE;                                  //
-long *preY;                                  //
+bool STATE;                                  //trang thai song hay chet
+long *preY;                                  //mang chua cac y phia truoc
 int countY;                                  //
-bool flag{true};                             //
+bool flag{true};                             //co cho game chay hay khong
 int dungXe{0};                               // thuc hien dung xe neu so xe dong du voi so dung Xe theo mod7
 int tinhThoiGianDung{0};                     // so lan cap nhap thoi gian dung
-long unit = 1;                                // de lam ham chay nguoc
+long unit = 1;                               // de lam ham chay nguoc khi unit = -1
 
 void ResetData()
 {
@@ -129,26 +131,17 @@ void ProcessDead()
     GotoXY(20, 18);
     printf("Dead, type y to continue or anykey to exit");
     GotoXY(0, 5);
-    Sleep(100);
-    cout << "\t\t**********      ***********      ***********" << '\n';
-    Sleep(100);
-    cout << "\t\t**********      ***********      ***********" << '\n';
-    Sleep(100);
-    cout << "\t\t***             **       **      ***        " << '\n';
-    Sleep(100);
-    cout << "\t\t***             **       **      ***        " << '\n';
-    Sleep(100);
-    cout << "\t\t**********      **       **      ***********" << '\n';
-    Sleep(100);
-    cout << "\t\t**********      **       **      ***********" << '\n';
-    Sleep(100);
-    cout << "\t\t       ***      **       **              ***" << '\n';
-    Sleep(100);
-    cout << "\t\t       ***      **       **              ***" << '\n';
-    Sleep(100);
-    cout << "\t\t**********      ***********      ***********" << '\n';
-    Sleep(100);
-    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);    cout << "\t\t***             **       **      ***        " << '\n';
+    Sleep(100);    cout << "\t\t***             **       **      ***        " << '\n';
+    Sleep(100);    cout << "\t\t**********      **       **      ***********" << '\n';
+    Sleep(100);    cout << "\t\t**********      **       **      ***********" << '\n';
+    Sleep(100);    cout << "\t\t       ***      **       **              ***" << '\n';
+    Sleep(100);    cout << "\t\t       ***      **       **              ***" << '\n';
+    Sleep(100);    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(500);
 }
 //Hàm xử lý khi người băng qua đường thành công
 void ProcessFinish(POINT &p)
@@ -170,7 +163,7 @@ void DrawCars(const string s)
         {
             GotoXY(X[i][j].x, X[i][j].y);
             if ((dungXe - i) % 7 == 0)
-                cout << y;
+                cout << RED << y << RESET;
             else
                 cout << s;
         }
@@ -180,7 +173,10 @@ void DrawCars(const string s)
 void DrawSticker(const POINT &p, const string s)
 {
     GotoXY(p.x, p.y);
+    if (s == "Y")
+        cout << BOLDBLUE;
     cout << s;
+    cout << RESET;
 }
 
 bool IsImpact(const POINT &p)
