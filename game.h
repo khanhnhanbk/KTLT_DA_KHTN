@@ -1,30 +1,33 @@
+#pragma once
 #include <string>
 #include "consoleM.h"
 //Hàm khởi tạo dữ liệu mặc định ban đầu
-#define MAX_CAR 17
-#define MAX_CAR_LENGTH 40
-#define MAX_SPEED 3
-#define thoiGianDung 50 // moi xe dung 10 nhip
+#define MAX_CAR 17        //
+#define MAX_CAR_LENGTH 10 //
+#define MAX_SPEED 3       //
+#define thoiGianDung 50   // moi xe dung 10 nhip
 //Biến toàn cục
 POINT **X;                                   //Mảng chứa MAX_CAR xe
 POINT Y;                                     // Đại diện người qua đường
+POINT posBoard = {5, 3};                     //
 int cnt = 0;                                 //Biến hỗ trợ trong quá trình tăng tốc độ xe di chuyển
 int MOVING;                                  //Biến xác định hướng di chuyển của người
 int SPEED;                                   // Tốc độ xe chạy (xem như level)
 int HEIGH_CONSOLE = 20, WIDTH_CONSOLE = 100; // Độ rộng và độ cao của màn hình console
-bool STATE;
-long *preY;
-int countY;
-bool flag{true};
-int dungXe{0};           // thuc hien dung xe neu so xe dong du voi so dung Xe theo mod7
-int tinhThoiGianDung{0}; // so lan cap nhap thoi gian dung
+bool STATE;                                  //
+long *preY;                                  //
+int countY;                                  //
+bool flag{true};                             //
+int dungXe{0};                               // thuc hien dung xe neu so xe dong du voi so dung Xe theo mod7
+int tinhThoiGianDung{0};                     // so lan cap nhap thoi gian dung
+long unit = 1;                                // de lam ham chay nguoc
 
 void ResetData()
 {
     MOVING = 'D'; // Ban đầu cho người di chuyển sang phải
     SPEED = 1;    // Tốc độ lúc đầu
-    int pos = rand() % (WIDTH_CONSOLE - 1) + 1;
-    Y = {pos, 19}; // Vị trí lúc đầu của người
+    int pos = rand() % (WIDTH_CONSOLE - 1) + 1 + posBoard.x;
+    Y = {pos, posBoard.y + HEIGH_CONSOLE - 1}; // Vị trí lúc đầu của người
     // Tạo mảng xe chạy
     if (X == NULL)
     {
@@ -36,8 +39,8 @@ void ResetData()
             int temp = (rand() % (WIDTH_CONSOLE - MAX_CAR_LENGTH)) + 1;
             for (int j = 0; j < MAX_CAR_LENGTH; j++)
             {
-                X[i][j].x = temp + j;
-                X[i][j].y = 2 + i;
+                X[i][j].x = posBoard.x + temp;
+                X[i][j].y = posBoard.y + 2 + i;
             }
         }
     }
@@ -52,7 +55,7 @@ void ResetData()
     countY = 0;
 }
 
-void DrawBoard(int x, int y, int width, int height, int curPosX = 0, int curPosY = 0)
+void DrawBoard(long x, long y, int width, int height, int curPosX = 0, int curPosY = 0)
 {
     GotoXY(x, y);
     cout << 'X';
@@ -77,9 +80,9 @@ void DrawBoard(int x, int y, int width, int height, int curPosX = 0, int curPosY
 void StartGame()
 {
     system("cls");
-    ResetData();                                   // Khởi tạo dữ liệu gốc
-    DrawBoard(0, 0, WIDTH_CONSOLE, HEIGH_CONSOLE); // Vẽ màn hình game
-    STATE = true;                                  //Bắt đầu cho Thread chạy
+    ResetData();                                                     // Khởi tạo dữ liệu gốc
+    DrawBoard(posBoard.x, posBoard.y, WIDTH_CONSOLE, HEIGH_CONSOLE); // Vẽ màn hình game
+    STATE = true;                                                    //Bắt đầu cho Thread chạy
 }
 //Hàm dọn dẹp tài nguyên
 void GabageCollect()
@@ -98,16 +101,15 @@ void PauseGame(HANDLE t)
     flag = !flag;
     SuspendThread(t);
     Sleep(100);
-    GotoXY(0, HEIGH_CONSOLE + 2);
-    GotoXY(0, HEIGH_CONSOLE + 2);
-    GotoXY(0, HEIGH_CONSOLE + 2);
-    GotoXY(0, HEIGH_CONSOLE + 2);
+    GotoXY(0, posBoard.y + HEIGH_CONSOLE + 2);
     if (!flag)
-        cout << "Da dung game, nhan \"P\" lan nua de tiep tuc.\n"
-             << "Nhan \"T\" de tai lai game da luu. \n"
-             << "Nhan \"L\" de luu game.";
+        cout << "\tDa dung game! \n"
+             << "\tNhan \"P\" lan nua de tiep tuc.\n"
+             << "\tNhan \"T\" de tai lai game da luu. \n"
+             << "\tNhan \"L\" de luu game.";
     else
         cout << "                                              \n"
+             << "                                              \n"
              << "                                              \n"
              << "                                              \n";
 }
@@ -127,16 +129,26 @@ void ProcessDead()
     GotoXY(20, 18);
     printf("Dead, type y to continue or anykey to exit");
     GotoXY(0, 5);
-    cout << "\t\t**********      ***********      ***********" << '\n'
-         << "\t\t**********      ***********      ***********" << '\n'
-         << "\t\t***             **       **      ***        " << '\n'
-         << "\t\t***             **       **      ***        " << '\n'
-         << "\t\t**********      **       **      ***********" << '\n'
-         << "\t\t**********      **       **      ***********" << '\n'
-         << "\t\t       ***      **       **              ***" << '\n'
-         << "\t\t       ***      **       **              ***" << '\n'
-         << "\t\t**********      ***********      ***********" << '\n'
-         << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t***             **       **      ***        " << '\n';
+    Sleep(100);
+    cout << "\t\t***             **       **      ***        " << '\n';
+    Sleep(100);
+    cout << "\t\t**********      **       **      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t**********      **       **      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t       ***      **       **              ***" << '\n';
+    Sleep(100);
+    cout << "\t\t       ***      **       **              ***" << '\n';
+    Sleep(100);
+    cout << "\t\t**********      ***********      ***********" << '\n';
+    Sleep(100);
+    cout << "\t\t**********      ***********      ***********" << '\n';
 }
 //Hàm xử lý khi người băng qua đường thành công
 void ProcessFinish(POINT &p)
@@ -144,8 +156,9 @@ void ProcessFinish(POINT &p)
     SPEED == MAX_SPEED ? SPEED = 1 : SPEED++;
     preY[countY] = p.x;
     countY++;
-    p = {18, 19}; // Vị trí lúc đầu của người
-    MOVING = 'D'; // Ban đầu cho người di chuyển sang phải
+    int pos = rand() % (WIDTH_CONSOLE - 1) + 1 + posBoard.x;
+    p = {pos, posBoard.y + HEIGH_CONSOLE - 1}; // Vị trí lúc đầu của người
+    MOVING = 'D';                              // Ban đầu cho người di chuyển sang phải
 }
 //Hàm vẽ các toa xe
 void DrawCars(const string s)
@@ -172,7 +185,7 @@ void DrawSticker(const POINT &p, const string s)
 
 bool IsImpact(const POINT &p)
 {
-    if (p.y == 1)
+    if (p.y == posBoard.y + 1)
     {
         for (int i = 0; i < countY; i++)
         {
@@ -180,16 +193,20 @@ bool IsImpact(const POINT &p)
                 return true;
         }
     }
-    if (p.y == 1 || p.y == 19)
+    if (p.y == posBoard.y + 1 || p.y == posBoard.y + HEIGH_CONSOLE - 1)
         return false;
     for (int i = 0; i < MAX_CAR_LENGTH; i++)
     {
-        if (p.x == X[p.y - 2][i].x && p.y == X[p.y - 2][i].y)
+        if (p.x == X[p.y - 2 - posBoard.y][i].x && p.y == X[p.y - 2 - posBoard.y][i].y)
             return true;
     }
     return false;
 }
 
+bool IsYPassed(const POINT &p)
+{
+    return p.y == posBoard.y + 1;
+}
 void MoveCars()
 {
     if (tinhThoiGianDung == thoiGianDung)
@@ -197,7 +214,7 @@ void MoveCars()
         dungXe = rand();
         tinhThoiGianDung = 0;
     }
-    for (int i = 1; i < MAX_CAR; i += 2)
+    for (int i = MAX_CAR / 2; i < MAX_CAR; i++)
     {
         if ((dungXe - i) % 7 == 0)
         {
@@ -211,13 +228,13 @@ void MoveCars()
             {
                 X[i][j] = X[i][j + 1];
             }
-            if (X[i][MAX_CAR_LENGTH - 1].x + 1 == WIDTH_CONSOLE)
-                X[i][MAX_CAR_LENGTH - 1].x = 1;
+            if (X[i][MAX_CAR_LENGTH - 1].x + 1 == posBoard.x + WIDTH_CONSOLE)
+                X[i][MAX_CAR_LENGTH - 1].x = posBoard.x + 1;
             else
                 X[i][MAX_CAR_LENGTH - 1].x++; // Kiểm tra xem xe có đụng màn hình
         } while (cnt < SPEED);
     }
-    for (int i = 0; i < MAX_CAR; i += 2)
+    for (int i = 0; i < MAX_CAR / 2; i++)
     {
         if ((dungXe - i) % 7 == 0)
         {
@@ -231,8 +248,8 @@ void MoveCars()
             {
                 X[i][j] = X[i][j - 1];
             }
-            if (X[i][0].x - 1 == 0)
-                X[i][0].x = WIDTH_CONSOLE - 1;
+            if (X[i][0].x - 1 == posBoard.x)
+                X[i][0].x = posBoard.x + WIDTH_CONSOLE - 1;
             else
                 X[i][0].x--; // Kiểm tra xe co dung thanh hay khong
         } while (cnt < SPEED);
@@ -240,7 +257,7 @@ void MoveCars()
 }
 void EraseCars()
 {
-    for (int i = 0; i < MAX_CAR; i += 2)
+    for (int i = 0; i < MAX_CAR / 2; i++)
     {
         cnt = 0;
         do
@@ -250,7 +267,7 @@ void EraseCars()
             cnt++;
         } while (cnt < SPEED);
     }
-    for (int i = 1; i < MAX_CAR; i += 2)
+    for (int i = MAX_CAR / 2; i < MAX_CAR; i++)
     {
         cnt = 0;
         do
@@ -264,37 +281,41 @@ void EraseCars()
 
 void MoveRight()
 {
-    if (Y.x < WIDTH_CONSOLE - 1)
+    if (Y.x + unit <= posBoard.x + WIDTH_CONSOLE - 1 &&
+        Y.x + unit >= 1 + posBoard.x)
     {
         DrawSticker(Y, " ");
-        Y.x++;
+        Y.x += unit;
         DrawSticker(Y, "Y");
     }
 }
 void MoveLeft()
 {
-    if (Y.x > 1)
+    if (Y.x - unit <= posBoard.x + WIDTH_CONSOLE - 1 &&
+        Y.x - unit >= 1 + posBoard.x)
     {
         DrawSticker(Y, " ");
-        Y.x--;
+        Y.x -= unit;
         DrawSticker(Y, "Y");
     }
 }
 void MoveDown()
 {
-    if (Y.y < HEIGH_CONSOLE - 1)
+    if (Y.y + unit <= HEIGH_CONSOLE - 1 + posBoard.y &&
+        Y.y + unit >= 1 + posBoard.y)
     {
         DrawSticker(Y, " ");
-        Y.y++;
+        Y.y += unit;
         DrawSticker(Y, "Y");
     }
 }
 void MoveUp()
 {
-    if (Y.y > 1)
+    if (Y.y - unit <= HEIGH_CONSOLE - 1 + posBoard.y &&
+        Y.y - unit >= 1 + posBoard.y)
     {
         DrawSticker(Y, " ");
-        Y.y--;
+        Y.y -= unit;
         DrawSticker(Y, "Y");
     }
 }
@@ -330,7 +351,7 @@ void SubThread()
                 {
                     ProcessDead(); // Kiểm tra xe có đụng không
                 }
-                if (Y.y == 1)
+                if (IsYPassed(Y))
                     ProcessFinish(Y); // Kiểm tra xem về đích chưa
                 tinhThoiGianDung++;   // dem so vong lap
                 Sleep(50);            //Hàm ngủ theo tốc độ SPEED

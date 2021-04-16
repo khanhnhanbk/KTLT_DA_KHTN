@@ -1,0 +1,22 @@
+Cách ý tưởng chưa hiện thực được.
+-----------------------
+Chào hỏi người chơi.
+Hỏi tên người chơi.
+-----------------------
+Giới thiệu ý tưởng.
+Hướng dẫn người chơi.
+----------------------------
+Cho phép người chơi đặt mục tiêu.
+Hiển nhiên, khi đạt mục tiêu thì người chơi win.
+---------------
+Mức độ vô cực.
+	Thay đổi các nút bấm (W = "xuống", A = "Qua phải"). Giúp người chơi tư duy ngược.
+---------------
+Xe chạy cùng chiều.
+	Cho giống thực tế. (Xe chạy ở làn đường bên phải theo hướng duy chuyển của bản thân)
+	Nghĩa là từ xe 1 - xe ở giữa (chạy xuôi),  còn lại chạy ngược.
+---------------
+Tô màu các xe đang đứng yên để người chơi dễ nhận biết.
+---------------
+thay đổi tọa độ board game về trung tâm màn hình.
+để ở phía trên là phần ghi điểm cho người chơi.
