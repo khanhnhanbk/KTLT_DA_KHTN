@@ -71,7 +71,7 @@ void loadFile()
             for (int j = 1; j < MAX_CAR_LENGTH; j++)
             {
                 X[i][j].x = X[i][0].x + j;
-                if (X[i][j].x >= WIDTH_CONSOLE)
+                if (X[i][j].x >= posBoard.x + WIDTH_CONSOLE)
                 {
                     /* code */
                     X[i][j].x = 1 + X[i][j].x - WIDTH_CONSOLE;
